@@ -7,7 +7,7 @@ using (var client = new WebClient())
 	postData["email"]         = "customer email";
 	postData["phone_number"]  = "+440000000000";
 	postData["country"]       = "US";
-	postData["lang"]		  = "en";
+	postData["lang"]          = "en";
 	postData["callback_url"]  = "https://www.yourdomain.com";
 	postData["redirect_url"]  = "https://www.yourdomain.com";
 
@@ -45,11 +45,16 @@ using (var client = new WebClient())
 		var responseString = Encoding.Default.GetString(response);
 
 			
-		Console.WriteLine(responseString);
-		//print your response here
-		//If want to parse the JSON response uncomment the below lines
-		//dynamic stuff = JObject.Parse(responseString);
-		//string URL = stuff.message;
+		dynamic stuff = JObject.Parse(responseString);
+		var ConcatenatedData = (string) stuff.status_code + stuff.message + stuff.reference + SecretKey;
+		var MySignature = GetHashSha256(ConcatenatedData);
+		if(MySignature == (string)stuff.signature){
+			//Response is valid.
+			//Get message key value as (string)stuff.message
+		}
+		else{
+			//Response signature is invalid
+		}
 
 }
 
